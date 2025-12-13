@@ -8,9 +8,12 @@ def get_model():
         raise RuntimeError("GEMINI_API_KEY missing")
 
     genai.configure(api_key=api_key)
-    return genai.GenerativeModel("gemini-1.5-flash")
+
+    # ✅ FIXED MODEL NAME
+    return genai.GenerativeModel("gemini-1.5-flash-latest")
 
 model = get_model()
+
 
 def analyze_transcript(transcript: str) -> dict:
     prompt = f"""
@@ -25,4 +28,13 @@ Transcript:
 """
 
     response = model.generate_content(prompt)
-    return json.loads(response.text)
+
+    try:
+        return json.loads(response.text)
+    except json.JSONDecodeError:
+        return {
+            "title": "Transcript Summary",
+            "summary": response.text.strip(),
+            "action_items": [],
+            "key_points": []
+        }
