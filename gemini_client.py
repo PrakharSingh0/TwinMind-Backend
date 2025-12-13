@@ -9,19 +9,19 @@ def get_model():
 
     genai.configure(api_key=api_key)
 
-    # ✅ FIXED MODEL NAME
-    return genai.GenerativeModel("gemini-1.5-flash-latest")
+    # ✅ FIXED: fully-qualified supported model
+    return genai.GenerativeModel("models/gemini-1.5-flash-002")
 
 model = get_model()
 
 
 def analyze_transcript(transcript: str) -> dict:
     prompt = f"""
-Return STRICT JSON with:
+Return STRICT JSON with keys:
 - title
-- summary (4–6 lines)
-- action_items (array)
-- key_points (array)
+- summary
+- action_items
+- key_points
 
 Transcript:
 {transcript}
@@ -31,7 +31,8 @@ Transcript:
 
     try:
         return json.loads(response.text)
-    except json.JSONDecodeError:
+    except Exception:
+        # Fail-safe so API never 500s
         return {
             "title": "Transcript Summary",
             "summary": response.text.strip(),
