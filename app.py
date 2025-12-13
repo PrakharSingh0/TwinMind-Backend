@@ -5,8 +5,8 @@ import uuid
 
 app = Flask(__name__)
 
-# Load Whisper model ONCE (important)
-model = whisper.load_model("base")  # tiny | base | small
+# Load SMALL model only (important for Render)
+model = whisper.load_model("tiny")  # tiny is safest on free tier
 
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -17,14 +17,12 @@ def transcribe_audio():
         return jsonify({"error": "No audio file provided"}), 400
 
     audio = request.files["audio"]
-    filename = f"{uuid.uuid4()}.mp3"
+    filename = f"{uuid.uuid4()}.wav"
     filepath = os.path.join(UPLOAD_FOLDER, filename)
     audio.save(filepath)
 
-    # Transcribe
     result = model.transcribe(filepath)
 
-    # Cleanup
     os.remove(filepath)
 
     return jsonify({
@@ -32,5 +30,9 @@ def transcribe_audio():
         "language": result["language"]
     })
 
+@app.route("/", methods=["GET"])
+def health():
+    return "Whisper backend running"
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000)
