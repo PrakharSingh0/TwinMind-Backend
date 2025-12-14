@@ -26,8 +26,8 @@ def get_model():
     logger.info(f"Initializing Gemini Model: {model_name}")
     
     return genai.GenerativeModel(
-        model_name="gemini-1.5-flash", 
-        generation_config={"response_mime_type": "application/json"}
+        model_name=model_name,
+        generation_config=generation_config,
     )
 
 # Initialize model once to avoid overhead on every request
