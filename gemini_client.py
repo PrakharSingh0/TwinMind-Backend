@@ -10,21 +10,22 @@ logger = logging.getLogger(__name__)
 def get_model():
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        logger.error("GEMINI_API_KEY is missing from environment variables")
+        logger.error("GEMINI_API_KEY is missing")
         raise RuntimeError("GEMINI_API_KEY missing")
 
     genai.configure(api_key=api_key)
 
-    # Configuration to FORCE JSON output
+    # CONFIGURATION
     generation_config = {
         "temperature": 0.7,
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_output_tokens": 8192,
-        "response_mime_type": "application/json", # <--- CRITICAL UPDATE
+        "response_mime_type": "application/json",
     }
+    
+    model_name = "gemini-1.5-pro"  # <--- CHANGED THIS
 
-   return genai.GenerativeModel(
+    logger.info(f"Initializing Gemini Model: {model_name}")
+    
+    return genai.GenerativeModel(
         model_name="gemini-1.5-flash", 
         generation_config={"response_mime_type": "application/json"}
     )
