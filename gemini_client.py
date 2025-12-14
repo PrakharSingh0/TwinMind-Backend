@@ -24,9 +24,9 @@ def get_model():
         "response_mime_type": "application/json", # <--- CRITICAL UPDATE
     }
 
-    return genai.GenerativeModel(
-        model_name="gemini-1.5-flash", # Generic alias usually points to latest stable
-        generation_config=generation_config,
+   return genai.GenerativeModel(
+        model_name="gemini-1.5-flash", 
+        generation_config={"response_mime_type": "application/json"}
     )
 
 # Initialize model once to avoid overhead on every request
